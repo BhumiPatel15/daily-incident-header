@@ -30,7 +30,8 @@ chmod +x daily-incident-header.sh
 The incident header is appended to 
 - incident_notes.log
 To view the entries: 
-```cat incident_notes.log
+```
+cat incident_notes.log
 ```
 
 ## Example Output (saved in incident_notes.log)
