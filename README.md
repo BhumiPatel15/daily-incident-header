@@ -1,29 +1,45 @@
-# Daily Incident Header (Bash)
+# Daily Incident Note Generator (Bash)
 
-A beginner-friendly Bash script for SOC-style daily incident reporting.  
-The analyst enters basic incident details, and the script appends a formatted incident header to a log file (`incident_notes.log`).  
-This helps maintain a simple, readable daily record of incident updates.
+A beginner-friendly Bash script to create SOC-style incident notes.  
+It collects incident details from the analyst, validates key inputs, and prints a clean note.  
+If you choose **Y**, it appends the note to `incident_notes.log` (with a one-time log header).
 
 ---
 
 ## What this script does
-- Prompts the analyst for:
-  - Incident ID
-  - Severity (Low/Medium/High)
-  - Title (short description)
-- Automatically adds:
-  - Today’s date (`YYYY-MM-DD`)
-  - Current system user (analyst name from the system)
-- Saves the output by appending to:
-  - `incident_notes.log`
+
+### Collects
+- Incident ID (accepts `INC-1023` or `1023` → auto converts to `INC-1023`)
+- Severity: `HIGH / MEDIUM / LOW` (invalid/blank → defaults to `LOW`)
+- Status: `OPEN / INVESTIGATING / CONTAINED / RESOLVED` (invalid/blank → defaults to `INVESTIGATING`)
+- Title (short description)
+- Summary (1 line; blank → `Summary not provided`)
+
+### Auto-adds
+- Date (`YYYY-MM-DD`)
+- Analyst (current system user)
+- Priority mapping:
+  - `HIGH → P1`, `MEDIUM → P2`, `LOW → P3`
+- Next Step guidance based on severity (escalate / investigate / monitor)
+
+### Logging
+- Log file: `incident_notes.log`
+- If you choose `Y`:
+  - Writes a one-time header if the log is missing/empty
+  - Appends each new note with a separator
+- If you choose `N`:
+  - Does **not** create or modify any log file
 
 ---
 
 ## How to run (Kali Linux)
-```bash
+
+```
+bash
 chmod +x daily-incident-header.sh
 ./daily-incident-header.sh
 ```
+
 
 ## Where the output is saved
 
@@ -52,3 +68,5 @@ Analyst : kali
 - command substitution: 
   - $(date+%F) for date 
   - $(whoami) for current user
+=======
+
