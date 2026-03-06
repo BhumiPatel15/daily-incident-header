@@ -5,11 +5,12 @@
 # File: daily-incident-header.sh
 #
 # What it does
-# - Collects incident details from an analyst and prints a clean note.
-# - Checks/cleans inputs (Incident ID, Severity, Status).
+# - Takes incident details from the analyst and prints a clean SOC-style note.
+# - Validates/cleans inputs (Incident ID, Severity, Status).
 # - Adds Priority + Next Step based on Severity.
-# - Optionally saves the note to incident_notes.log (appends).
-# - Writes the log header only once (when the log is new/empty).
+# - If Status is RESOLVED, Next Step switches to a closure message.
+# - Daily log rotation: saves to incident_notes_YYYY-MM-DD.log.
+# - If user chooses Y, appends to the daily log and writes the log header once.
 #
 # Inputs
 # - Incident ID: INC-1023 or 1023 (auto -> INC-1023)
@@ -63,6 +64,10 @@ else
         echo "Warning: INvalid Status. Defaulting it to INVESTIGATING"
 fi
 
+if [[ "${Status^^}" == RESOLVED ]];then 
+	next_step="Close ticket + document RCA."
+fi 
+
 read -r -p "Title:" title
 
 read -r -p "Summary (1 line):" summary
@@ -70,10 +75,10 @@ if [[ -z "$summary" ]]; then
         summary="Summary not provided"
 fi
 
-today=$(date +"%F")
 username=$(whoami)
-log_file="incident_notes.log"
-
+today=$(date +"%F %H:%M:%S")
+day=$(date +"%F")
+log_file="incident_notes_$(date +"%F").log"
 echo "Do you want to save the data to $log_file (Y/N) ?"
 read -r CONSENT
 
